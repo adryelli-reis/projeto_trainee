@@ -1,0 +1,8 @@
+future==0.18.3
+django==3.2
+celery==4.4.4
+psycopg2==2.9.6
+redis==3.5.3
+kombu==4.6.11
+django-celery-beat==2.0.0
+djangorestframework==3.12.4

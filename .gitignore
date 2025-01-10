@@ -1,0 +1,18 @@
+# Django specific
+*.log
+*.pot
+*.pyc
+__pycache__/
+
+# Environments
+
+# IDEs
+.vscode/
+.idea/
+
+# Migrations
+*/migrations/*
+
+# Static files
+staticfiles/
+static/

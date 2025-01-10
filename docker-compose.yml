@@ -1,0 +1,58 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:13
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: mydb
+      POSTGRES_USER: adry
+      POSTGRES_PASSWORD: minha_senha
+    networks:
+      - mynetwork
+  
+  redis:
+    image: redis:7.0
+    ports:
+      - "6379:6379"
+    networks:
+      - mynetwork
+
+  web:
+    build: .
+    command: bash -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+      - redis
+    networks:
+      - mynetwork
+
+  celery:
+    build: .
+    command: celery -A projeto_trainee worker --loglevel=info
+    volumes:
+      - .:/app
+    depends_on:
+      - redis
+      - web
+    networks:
+      - mynetwork
+    environment:
+      - DJANGO_SETTINGS_MODULE=projeto_trainee.settings
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+
+
+networks:
+  mynetwork:
+    driver: bridge
+
+volumes:
+  postgres_data:
